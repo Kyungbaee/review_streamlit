@@ -1,5 +1,5 @@
 streamlit
---upgrade setuptools
+pip install --upgrade setuptools
 pandas
 Mecab
 eunjeon
