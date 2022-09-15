@@ -2,3 +2,4 @@ streamlit
 pandas
 konlpy
 tensorflow
+plotly
