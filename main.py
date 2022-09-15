@@ -53,7 +53,7 @@ def main2():
         stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
         string_data = stringio.read()
         for review in string_data.split('\n'):
-            r_score = sentiment(review.split(',')[2])
+            r_score = sentiment(review)
             if(r_score > 0.5): 
                 review_list.append(('긍정',1))
             else:
