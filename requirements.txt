@@ -1,4 +1,5 @@
 streamlit
+--upgrade setuptools
 pandas
 Mecab
 eunjeon
