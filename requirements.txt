@@ -1,5 +1,5 @@
 streamlit
-setuptools
+pip==22.2.2
 pandas
 Mecab
 eunjeon
