@@ -1,5 +1,6 @@
 streamlit
 pandas
+Mecab
 eunjeon
 konlpy
 tensorflow
