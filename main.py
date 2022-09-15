@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-from eunjeon import Mecab
+from konlpy.tag import Mecab
 from keras_preprocessing.sequence import pad_sequences
 from keras.models import load_model
 import os
