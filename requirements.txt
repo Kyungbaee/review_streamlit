@@ -1,4 +1,4 @@
-python-mecab-ko==1.0.9
+# python-mecab-ko==1.0.9
 eunjeon==0.4.0
 keras==2.10.0
 Keras_Preprocessing==1.1.2
