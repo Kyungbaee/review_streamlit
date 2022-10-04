@@ -8,34 +8,44 @@ import pandas as pd
 import pickle
 import plotly.express as px
 from io import StringIO
-import sqlite3 
-import hashlib
-
-def make_hashes(password):
-	return hashlib.sha256(str.encode(password)).hexdigest()
-
-def check_hashes(password,hashed_text):
-	if make_hashes(password) == hashed_text:
-		return hashed_text
-	return False
-
-def create_user():
-	c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT,password TEXT)')
-
-def add_user(username,password):
-	c.execute('INSERT INTO userstable(username,password) VALUES (?,?)',(username,password))
-	conn.commit()
-
-def login_user(username,password):
-	c.execute('SELECT * FROM userstable WHERE username =? AND password = ?',(username,password))
-	data = c.fetchall()
-	return data
+import streamlit_authenticator as stauth
+import yaml
 
 st.set_page_config(layout="wide")
 col1,col2,col3=st.columns([1.5,2.5,1.5])
 
-conn = sqlite3.connect('database.db')
-c = conn.cursor()
+hashed_passwords = stauth.Hasher(['123', '456']).generate()
+
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=yaml.SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized']
+)
+
+name, authentication_status, username = authenticator.login('Login', 'main')
+
+if authentication_status:
+    authenticator.logout('Logout', 'main')
+    st.write(f'Welcome *{name}*')
+    st.title('Some content')
+elif authentication_status == False:
+    st.error('Username/password is incorrect')
+elif authentication_status == None:
+    st.warning('Please enter your username and password')
+
+if st.session_state["authentication_status"]:
+    authenticator.logout('Logout', 'main')
+    st.write(f'Welcome *{st.session_state["name"]}*')
+    st.title('Some content')
+elif st.session_state["authentication_status"] == False:
+    st.error('Username/password is incorrect')
+elif st.session_state["authentication_status"] == None:
+    st.warning('Please enter your username and password')
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -89,43 +99,6 @@ def main2():
         fig1 = px.pie(df.groupby("감정", as_index=False).sum(), values='카운트', names='감정', title='리뷰 감정 분석')      #plotly pie차트
         st.plotly_chart(fig1)
 
-def main3():
-
-	st.title("ログイン機能テスト")
-
-	menu = ["ホーム","ログイン","サインアップ"]
-	choice = st.sidebar.selectbox("メニュー",menu)
-
-	if choice == "ホーム":
-		st.subheader("ホーム画面です")
-
-	elif choice == "ログイン":
-		st.subheader("ログイン画面です")
-
-		username = st.sidebar.text_input("ユーザー名を入力してください")
-		password = st.sidebar.text_input("パスワードを入力してください",type='password')
-		if st.sidebar.checkbox("ログイン"):
-			create_user()
-			hashed_pswd = make_hashes(password)
-
-			result = login_user(username,check_hashes(password,hashed_pswd))
-			if result:
-
-				st.success("{}さんでログインしました".format(username))
-
-			else:
-				st.warning("ユーザー名かパスワードが間違っています")
-
-	elif choice == "サインアップ":
-		st.subheader("新しいアカウントを作成します")
-		new_user = st.text_input("ユーザー名を入力してください")
-		new_password = st.text_input("パスワードを入力してください",type='password')
-
-		if st.button("サインアップ"):
-			create_user()
-			add_user(new_user,make_hashes(new_password))
-			st.success("アカウントの作成に成功しました")
-			st.info("ログイン画面からログインしてください")
 
 if __name__ == '__main__':
 	main()
@@ -133,6 +106,3 @@ with col1:
     main()
 with col2:
     main2()
-with col3:
-    main3()
-
