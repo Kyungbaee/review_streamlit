@@ -1,17 +1,15 @@
-credentials:
-  usernames:
-    jsmith:
-      email: jsmith@gmail.com
-      name: John Smith
-      password: '123' # To be replaced with hashed password
-    rbriggs:
-      email: rbriggs@gmail.com
-      name: Rebecca Briggs
-      password: '456' # To be replaced with hashed password
 cookie:
   expiry_days: 30
   key: some_signature_key
   name: some_cookie_name
+credentials:
+  usernames:
+    cubist:
+      name: "\uD050\uBE44\uC2A4\uD2B8"
+      password: $2b$12$VAIaSJGpoY2AsBiECKx0n.VdtZpDUQ3woXMKH3H8vJGaHAVGlScFm
+    rmiller:
+      name: Rebecca Miller
+      password: $2b$12$Y7nB7eDXbBZfpt.MHAxdaOHjIlSSnO4VmrSOrp2AKhAvI5e6/qmOe
 preauthorized:
   emails:
   - melsby@gmail.com

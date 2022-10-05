@@ -10,55 +10,12 @@ import plotly.express as px
 from io import StringIO
 import streamlit_authenticator as stauth
 import yaml
+from pathlib import Path
 
 st.set_page_config(layout="wide")
-col1,col2,col3=st.columns([1.5,2.5,1.5])
-
-hashed_passwords = stauth.Hasher(['123', '456']).generate()
-
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=yaml.SafeLoader)
-
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
-)
-
-name, authentication_status = authenticator.login('Login', 'sidebar')
-
-if authentication_status:
-    authenticator.logout('Logout', 'main')
-    st.write(f'Welcome *{name}*')
-    st.title('Some content')
-elif authentication_status == False:
-    st.error('Username/password is incorrect')
-elif authentication_status == None:
-    st.warning('Please enter your username and password')
-
-# if st.session_state["authentication_status"]:
-#     authenticator.logout('Logout', 'main')
-#     st.write(f'Welcome *{st.session_state["name"]}*')
-#     st.title('Some content')
-# elif st.session_state["authentication_status"] == False:
-#     st.error('Username/password is incorrect')
-# elif st.session_state["authentication_status"] == None:
-#     st.warning('Please enter your username and password')
-
+col1,col2=st.columns([1.5,2.5])
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-loaded_model = load_model('best_model.h5')
-
-with open('tokenizer.pickle', 'rb') as handle:
-    tokenizer = pickle.load(handle)
-
-okt = Okt()
-
 stopwords = ['도', '는', '다', '의', '가', '이', '은', '한', '에', '하', '고', '을', '를', '인', '듯', '과', '와', '네', '들', '듯', '지', '임', '게']
-
-
 max_len = 80
 
 def sentiment(n_sentence):
@@ -99,10 +56,36 @@ def main2():
         fig1 = px.pie(df.groupby("감정", as_index=False).sum(), values='카운트', names='감정', title='리뷰 감정 분석')      #plotly pie차트
         st.plotly_chart(fig1)
 
+# --- login ---
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=stauth.SafeLoader)
 
-if __name__ == '__main__':
-	main()
-with col1:
-    main()
-with col2:
-    main2()
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized']
+)
+
+name, authentication_status, username = authenticator.login("Login","main")
+
+if authentication_status == False:
+    st.error("Username/password is incorrect")
+
+if authentication_status == None:
+    st.warning("Please enter your username and password")
+
+if authentication_status:
+    authenticator.logout("Logout","sidebar")
+    st.sidebar.title(f"Welcome {name}")
+
+    loaded_model = load_model('best_model.h5')
+    with open('tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
+    okt = Okt()
+
+    with col1:
+        main()
+    with col2:
+        main2()
