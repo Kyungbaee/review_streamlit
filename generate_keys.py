@@ -1,9 +1,9 @@
 import yaml
 import streamlit_authenticator as stauth
 
-names = ["큐비스트","Rebecca Miller"]
-usernames = ["cubist", "rmiller"]
-passwords = ["XXXX","XXXX"]
+names = ["오구의모험","로그인테스트"]
+usernames = ["오구", "로그인"]
+passwords = ["xxxx","xxxx"]
 
 hashed_passwords = stauth.Hasher(passwords).generate()
 
@@ -21,7 +21,7 @@ data = {
             }
     },
     "cookie": {
-        "expiry_days" : 30,
+        "expiry_days" : 0,
         "key": "some_signature_key",
         "name" : "some_cookie_name"
     },

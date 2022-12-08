@@ -12,7 +12,7 @@ import streamlit_authenticator as stauth
 import yaml
 from pathlib import Path
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 col1,col2=st.columns([1.5,2.5])
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 stopwords = ['도', '는', '다', '의', '가', '이', '은', '한', '에', '하', '고', '을', '를', '인', '듯', '과', '와', '네', '들', '듯', '지', '임', '게']
@@ -60,6 +60,7 @@ def main2():
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=stauth.SafeLoader)
 
+## yaml 파일 데이터로 객체 생성
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
@@ -68,8 +69,12 @@ authenticator = stauth.Authenticate(
     config['preauthorized']
 )
 
+## 로그인 위젯 렌더링
+## log(in/out)(로그인 위젯 문구, 버튼 위치)
+## 버튼 위치 = "main" or "sidebar"
 name, authentication_status, username = authenticator.login("Login","main")
 
+# authentication_status : 인증 상태 (실패, 값없음, 성공)
 if authentication_status == False:
     st.error("Username/password is incorrect")
 
